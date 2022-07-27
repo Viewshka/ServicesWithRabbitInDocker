@@ -1,0 +1,64 @@
+version: "3"
+
+volumes:
+  app_postgres_db_volume:
+  user_service_postgres_db_volume:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: App/Dockerfile
+    restart: always
+    container_name: "app"
+    ports:
+      - "5002:80"
+    depends_on:
+      - app_postgres_db
+      - rabbitmq
+    environment:
+      - TZ=Europe/Moscow
+  
+  app_postgres_db:
+    container_name: "app_postgres"
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    volumes:
+      - app_postgres_db_volume:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_DB: "app"
+      POSTGRES_PASSWORD: "root"
+
+  user_service:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+    restart: always
+    container_name: "user_service"
+    ports:
+      - "5003:80"
+    depends_on:
+      - user_service_postgres_db
+      - rabbitmq
+    environment:
+      - TZ=Europe/Moscow
+
+  user_service_postgres_db:
+    container_name: "user_service_postgres"
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    volumes:
+      - user_service_postgres_db_volume:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_DB: "user_service"
+      POSTGRES_PASSWORD: "root"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      
