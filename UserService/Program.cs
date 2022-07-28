@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseNpgsql(connectionString));
-builder.Services.AddRabbitMq(builder.Configuration);
+builder.Services.AddRabbitMq();
 
 var app = builder.Build();
 

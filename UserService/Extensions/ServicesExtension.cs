@@ -6,10 +6,8 @@ namespace UserService.Extensions;
 
 public static class ServicesExtension
 {
-    public static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddRabbitMq(this IServiceCollection services)
     {
-        var rabbitConfig = configuration.GetSection("rabbit");
-
         services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
         services.AddSingleton<IPooledObjectPolicy<IModel>, RabbitModelPooledObjectPolicy>();
 
